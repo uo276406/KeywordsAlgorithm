@@ -5,11 +5,12 @@ from spacy.lang.en.stop_words import STOP_WORDS
 
 class KeywordExtractor:
     """Extract keywords from text"""
-    def __init__(self, damping_factor=0.85, convergence_threshold=1e-5, iteration_steps=50, processor=None, graph=None):
+    def __init__(self, damping_factor=0.85, convergence_threshold=1e-5, iteration_steps=50, score_threshold=0, processor=None, graph=None):
         self.damping_factor = damping_factor  # usually  .85
         self.threshold = convergence_threshold
         self.iterations = iteration_steps
         self.processor = processor
+        self.score_threshold = score_threshold
         self.graph = graph
 
     """Gives a score for every word which has been found in the vocabulary"""
@@ -42,7 +43,7 @@ class KeywordExtractor:
         candidate_phrase = " "
         for word in self.processor.lemmatized_text:
             if word in self.processor.stopwords or word in STOP_WORDS:
-                if candidate_phrase != " ":
+                if candidate_phrase != " " and candidate_phrase in self.processor.cleaned_text:
                     candidate_phrases.append(str(candidate_phrase).strip().split())
                 candidate_phrase = " "
             elif word not in self.processor.stopwords and word not in STOP_WORDS:
@@ -81,11 +82,10 @@ class KeywordExtractor:
 
             phrase_scores.append(phrase_score)
             keywords.append(keyword.strip())
-        """
+
         for i in range(len(keywords)):
-            if phrase_scores[i] > 0:
-                print("Keyword [" + str(i) + "] : " + str(keywords[i]) + ", Score: " + str(phrase_scores[i]))
-        """
+            if phrase_scores[i] < self.score_threshold:  # Only return keywords with score 0.2 or more
+                keywords.pop(i)
 
         return keywords, phrase_scores
 

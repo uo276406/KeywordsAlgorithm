@@ -45,7 +45,9 @@ class TextProcessor:
         self.lemmatized_text = lemmatized_text
 
     def set_stopwords(self):
-        wanted_pos = ['NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBG', 'FW']
+        #wanted_pos = ['NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBG', 'FW']
+        #wanted_pos = ['NN', 'NNS', 'NNP', 'NNPS']
+        wanted_pos = ['NN', 'NNS', 'NNP', 'NNPS', 'JJ']
         for word in self.pos_tag:
             if word[1] not in wanted_pos:
                 self.stopwords.append(word[0])
